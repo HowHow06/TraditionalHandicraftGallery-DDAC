@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    @await Html.PartialAsync("~/Views/_Shared/Gallery/_title_meta.cshtml")
+    @RenderSection("styles", false)
+    @await Html.PartialAsync("~/Views/_Shared/Gallery/_head_css.cshtml")
+
+</head>
+
+<body>
+    <!-- Begin page -->
+    <div id="wrapper">
+
+        @await Html.PartialAsync("~/Views/_Shared/Gallery/_topbar.cshtml")
+
+        @if (!(ViewBag.noPageTitle == true))
+        {
+            @await Html.PartialAsync("~/Views/_Shared/Gallery/_page_title.cshtml")
+        }
+
+        <!-- ============================================================== -->
+        <!-- Main Content here -->
+        <!-- ============================================================== -->
+
+        @RenderBody()
+       
+        @await Html.PartialAsync("~/Views/_Shared/Gallery/_footer.cshtml")
+    </div>
+    <!-- END layout-wrapper -->
+
+    @RenderSection("externalhtml", required: false)
+
+
+    @await Html.PartialAsync("~/Views/_Shared/Gallery/_vendor_scripts.cshtml")
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html>
