@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="HandicraftAdmin\" />
+    <Folder Include="Controllers\HandicraftAdmin\" />
     <Folder Include="SQL_Queries\" />
     <Folder Include="Views\Handicraft\" />
   </ItemGroup>

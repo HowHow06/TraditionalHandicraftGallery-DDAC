@@ -65,15 +65,14 @@ namespace DDAC_TraditionalHandicraftGallery
 
             app.UseEndpoints(endpoints =>
             {
-                // This route will be used when the user enters /admin in the URL
                 endpoints.MapControllerRoute(
-                name: "admin",
-                pattern: "admin/{controller=Dashboard}/{action=Index}/{id?}");
+                   name: "areas",
+                   pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+               );
 
-                // This route will be used for all other URLs
                 endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 

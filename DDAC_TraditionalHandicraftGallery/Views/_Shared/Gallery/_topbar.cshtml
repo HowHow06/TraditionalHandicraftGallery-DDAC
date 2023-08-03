@@ -34,23 +34,37 @@
                                 <li class="@(ViewBag.pTitle?.ToString().Equals("gallery", StringComparison.OrdinalIgnoreCase) == true ? "active" : "")">
                                     <a href="@Url.RouteUrl("default", new { controller = "Gallery", action = "Index" })">gallery</a>
                                 </li>
-                                <li class="dropdown">
-                                    <a href="javascript:;">account</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="@Url.RouteUrl("default", new { controller = "Account", action = "ViewQuoteRequest" })">view quote requests</a></li>
-                                        <li><a href="@Url.RouteUrl("default", new { controller = "Account", action = "EditPassword" })">edit password</a></li>
-                                    </ul>
-                                </li>
-                                <li class="@(ViewBag.pTitle?.ToString().Equals("login", StringComparison.OrdinalIgnoreCase) == true ? "active" : "")">
-                                    <a href="@Url.RouteUrl("default", new { controller = "AuthGalleryLogin", action = "Index" })">login</a>
-                                </li> 
-                                <li class="@(ViewBag.pTitle?.ToString().Equals("register", StringComparison.OrdinalIgnoreCase) == true ? "active" : "")">
-                                    <a href="@Url.RouteUrl("default", new { controller = "AuthGalleryRegister", action = "Index" })">register</a>
-                                </li>
+
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li class="dropdown">
+                                        <a href="javascript:;">account</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="@Url.RouteUrl("default", new { controller = "Account", action = "ViewQuoteRequest" })">view quote requests</a></li>
+                                            <li><a href="@Url.RouteUrl("default", new { controller = "Account", action = "EditPassword" })">edit password</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <form id="logoutForm" method="post" action="@Url.RouteUrl("default", new { controller = "AuthGalleryLogin", action = "Logout" })">
+                                        </form>
+                                        <a href="javascript:;" onclick="document.getElementById('logoutForm').submit()">Logout</a>
+                                    </li>
+                                }
+
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <li class="@(ViewBag.pTitle?.ToString().Equals("login", StringComparison.OrdinalIgnoreCase) == true ? "active" : "")">
+                                        <a href="@Url.RouteUrl("default", new { controller = "AuthGalleryLogin", action = "Index" })">login</a>
+                                    </li>
+                                    <li class="@(ViewBag.pTitle?.ToString().Equals("register", StringComparison.OrdinalIgnoreCase) == true ? "active" : "")">
+                                        <a href="@Url.RouteUrl("default", new { controller = "AuthGalleryRegister", action = "Index" })">register</a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </nav>
                 </div>
+
             </div>
         </div>
     </div>
