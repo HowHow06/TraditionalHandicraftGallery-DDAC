@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Nazox": {
+    "DDAC_TraditionalHandicraftGallery": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
