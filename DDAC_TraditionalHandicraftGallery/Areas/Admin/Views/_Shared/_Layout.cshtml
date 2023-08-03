@@ -3,9 +3,9 @@
 
 <head>
 
-    @await Html.PartialAsync("~/Views/_Shared/_title_meta.cshtml")
+    @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_title_meta.cshtml")
     @RenderSection("styles", false)
-    @await Html.PartialAsync("~/Views/_Shared/_head_css.cshtml")
+    @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_head_css.cshtml")
 
 </head>
 
@@ -14,8 +14,8 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        @await Html.PartialAsync("~/Views/_Shared/_topbar.cshtml")
-        @await Html.PartialAsync("~/Views/_Shared/_sidebar.cshtml")
+        @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_topbar.cshtml")
+        @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_sidebar.cshtml")
 
         <!-- ============================================================== -->
         <!-- Start right Content here -->
@@ -25,7 +25,7 @@
             <div class="page-content">
                 <div class="container-fluid">
 
-                    @await Html.PartialAsync("~/Views/_Shared/_page_title.cshtml")
+                    @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_page_title.cshtml")
 
                     @RenderBody()
 
@@ -33,7 +33,7 @@
             </div>
             <!-- End Page-content -->
 
-            @await Html.PartialAsync("~/Views/_Shared/_footer.cshtml")
+            @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_footer.cshtml")
 
         </div>
         <!-- end main content-->
@@ -44,9 +44,9 @@
 
     <!-- END layout-wrapper -->
 
-    @await Html.PartialAsync("~/Views/_Shared/_right_sidebar.cshtml")
+    @await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_right_sidebar.cshtml")
 
-    @*@await Html.PartialAsync("~/Views/_Shared/_vendor_scripts.cshtml")*@
+    @*@await Html.PartialAsync("~/Areas/Admin/Views/_Shared/_vendor_scripts.cshtml")*@
 
     @RenderSection("scripts", required: false)
 
