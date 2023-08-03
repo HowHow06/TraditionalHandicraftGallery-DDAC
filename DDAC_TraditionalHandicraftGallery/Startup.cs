@@ -60,6 +60,7 @@ namespace DDAC_TraditionalHandicraftGallery
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

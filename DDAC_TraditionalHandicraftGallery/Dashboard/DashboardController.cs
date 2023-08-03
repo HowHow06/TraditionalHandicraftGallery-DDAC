@@ -10,7 +10,6 @@ namespace DDAC_TraditionalHandicraftGallery.Dashboard
 {
     public class DashboardController : Controller
     {
-        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
