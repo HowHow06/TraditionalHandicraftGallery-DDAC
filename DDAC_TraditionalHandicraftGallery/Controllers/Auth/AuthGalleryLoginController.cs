@@ -50,7 +50,7 @@ namespace DDAC_TraditionalHandicraftGallery.Controllers.Auth
                 }
                 else if (roles.Contains("Admin"))
                 {
-                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                    return RedirectToAction("Index", "Handicrafts", new { area = "Admin" });
                 }
                 else if (roles.Contains("User"))
                 {

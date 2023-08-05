@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Policy;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDAC_TraditionalHandicraftGallery.DataAccess
 {
@@ -72,7 +74,15 @@ namespace DDAC_TraditionalHandicraftGallery.DataAccess
             //);
         }
 
-        public override int SaveChanges()
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            UpdateTimestamps();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+
+        private void UpdateTimestamps()
         {
             foreach (var entry in ChangeTracker.Entries<IHasTimeStamp>().Where(e => e.State == EntityState.Modified))
             {
@@ -82,8 +92,14 @@ namespace DDAC_TraditionalHandicraftGallery.DataAccess
             foreach (var entry in ChangeTracker.Entries<IHasTimeStamp>().Where(e => e.State == EntityState.Added))
             {
                 entry.Entity.CreatedAt = DateTime.UtcNow;
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
             }
 
+        }
+
+        public override int SaveChanges()
+        {
+            UpdateTimestamps();
             return base.SaveChanges();
         }
 

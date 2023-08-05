@@ -1,0 +1,85 @@
+﻿@model DDAC_TraditionalHandicraftGallery.ViewModels.ApplicationUserViewModel
+@{
+    ViewBag.Title = "Create";
+    ViewBag.pTitle = "Users";
+    ViewBag.pageTitle = "Traditional Handicraft Gallery";
+    Layout = "~/Areas/Admin/Views/_Shared/_Layout.cshtml";
+}
+
+
+<h1>Create</h1>
+<hr />
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group row mb-3">
+                        <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label asp-for="EmailConfirmed" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+
+                            <input class="form-check-input" asp-for="EmailConfirmed" />
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label asp-for="Password" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label asp-for="ConfirmPassword" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <div class="col-sm-10">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="submit" value="Create" class="col-form-label btn btn-primary waves-effect waves-light w-100" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-primary waves-effect waves-light">Back to List</a>
+</div>
+
+<!-- end row -->
+<!-- JAVASCRIPT -->
+<script src="~/assets/libs/jquery/jquery.min.js"></script>
+<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+<script src="~/assets/libs/node-waves/waves.min.js"></script>
+
+<!-- bs custom file input plugin -->
+<script src="~/assets/libs/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+
+<script src="~/assets/js/pages/form-element.init.js"></script>
+
+<script src="~/assets/js/app.js"></script>

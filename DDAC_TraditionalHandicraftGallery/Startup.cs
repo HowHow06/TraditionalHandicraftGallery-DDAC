@@ -67,7 +67,7 @@ namespace DDAC_TraditionalHandicraftGallery
             {
                 endpoints.MapControllerRoute(
                    name: "areas",
-                   pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+                   pattern: "{area:exists}/{controller=Handicrafts}/{action=Index}/{id?}"
                );
 
                 endpoints.MapControllerRoute(
