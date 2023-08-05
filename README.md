@@ -1,6 +1,5 @@
 # Traditional Handicraft Gallery #
 
-Admin Theme by Themesbrand.
 
 ### Getting Started ###
 
