@@ -73,6 +73,6 @@ SET IDENTITY_INSERT Handicrafts ON;
 INSERT INTO Handicrafts
     (Id, AuthorEmail, AuthorName, CreatedAt, Description, ImageURL, IsHidden, Name, TypeId, UpdatedAt)
 VALUES
-    (1, 'johnsmith@example.com', 'John Smith', '2023-08-03T21:53:22.737', 'A beautifully crafted glazed pot.', 'url1', 0, 'Glazed Pot', 1, '2023-08-03T21:53:22.737'),
-    (2, 'janedoe@example.com', 'Jane Doe', '2023-08-03T21:53:22.737', 'A sturdy oak table, hand-crafted with precision.', 'url2', 0, 'Oak Table', 2, '2023-08-03T21:53:22.737');
+    (1, 'johnsmith@example.com', 'John Smith', '2023-08-03T21:53:22.737', 'A beautifully crafted glazed pot.', 'http://placehold.it/500x500', 0, 'Glazed Pot', 1, '2023-08-03T21:53:22.737'),
+    (2, 'janedoe@example.com', 'Jane Doe', '2023-08-03T21:53:22.737', 'A sturdy oak table, hand-crafted with precision.', 'http://placehold.it/500x500', 0, 'Oak Table', 2, '2023-08-03T21:53:22.737');
 SET IDENTITY_INSERT Handicrafts OFF;
