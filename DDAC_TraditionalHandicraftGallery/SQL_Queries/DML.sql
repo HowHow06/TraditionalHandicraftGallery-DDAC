@@ -65,7 +65,9 @@ INSERT INTO HandicraftTypes
     (Id, CreatedAt, Name, UpdatedAt)
 VALUES
     (1, '2023-08-03T21:53:22.737', 'Pottery', '2023-08-03T21:53:22.737'),
-    (2, '2023-08-03T21:53:22.737', 'Woodwork', '2023-08-03T21:53:22.737');
+    (2, '2023-08-03T21:53:22.737', 'Woodwork', '2023-08-03T21:53:22.737'),
+    (3, '2023-08-03T21:53:22.737', 'Bamboo', '2023-08-03T21:53:22.737'),
+    (4, '2023-08-03T21:53:22.737', 'Batik', '2023-08-03T21:53:22.737');
 SET IDENTITY_INSERT HandicraftTypes OFF;
 
 -- Inserting data into the Handicrafts table
@@ -74,5 +76,7 @@ INSERT INTO Handicrafts
     (Id, AuthorEmail, AuthorName, CreatedAt, Description, ImageURL, IsHidden, Name, TypeId, UpdatedAt)
 VALUES
     (1, 'johnsmith@example.com', 'John Smith', '2023-08-03T21:53:22.737', 'A beautifully crafted glazed pot.', 'http://placehold.it/500x500', 0, 'Glazed Pot', 1, '2023-08-03T21:53:22.737'),
-    (2, 'janedoe@example.com', 'Jane Doe', '2023-08-03T21:53:22.737', 'A sturdy oak table, hand-crafted with precision.', 'http://placehold.it/500x500', 0, 'Oak Table', 2, '2023-08-03T21:53:22.737');
+    (2, 'janedoe@example.com', 'Jane Doe', '2023-08-03T21:53:22.737', 'A sturdy oak table, hand-crafted with precision.', 'http://placehold.it/500x500', 0, 'Oak Table', 2, '2023-08-03T21:53:22.737'),
+    (3, 'mikewalker@example.com', 'Mike Walker', '2023-08-03T21:53:22.737', 'An amazing baskets.', 'http://placehold.it/500x500', 0, 'Bamboo Basket', 3, '2023-08-03T21:53:22.737'),
+    (4, 'sarahjones@example.com', 'Sarah Jones', '2023-08-03T21:53:22.737', 'A delicate baju kurung.', 'http://placehold.it/500x500', 0, 'Batik Baju Kurung', 4, '2023-08-03T21:53:22.737');
 SET IDENTITY_INSERT Handicrafts OFF;
