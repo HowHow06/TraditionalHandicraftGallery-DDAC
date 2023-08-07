@@ -6,11 +6,13 @@ using DDAC_TraditionalHandicraftGallery.DataAccess;
 using DDAC_TraditionalHandicraftGallery.Models;
 using DDAC_TraditionalHandicraftGallery.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
 using System.Data;
@@ -29,16 +31,25 @@ namespace DDAC_TraditionalHandicraftGallery.Controllers.HandicraftGallery
 
         private readonly string _snsTopicArn;
 
-        public QuoteController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration)
+        public QuoteController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration, IWebHostEnvironment env)
         {
             _snsTopicArn = configuration["QuoteRequestSnsTopic"];
             _context = context;
             _userManager = userManager;
-
-            var credentials = new SessionAWSCredentials(awsConfig.Value.AccessKey, awsConfig.Value.SecretKey, awsConfig.Value.SessionToken);
             var config = new AmazonSimpleNotificationServiceConfig { RegionEndpoint = RegionEndpoint.GetBySystemName(awsConfig.Value.Region) };
 
-            _snsClient = new AmazonSimpleNotificationServiceClient(credentials, config);
+            if (env.IsDevelopment())
+            {
+                // In development, use the provided AWS credentials
+                var credentials = new SessionAWSCredentials(awsConfig.Value.AccessKey, awsConfig.Value.SecretKey, awsConfig.Value.SessionToken);
+                _snsClient = new AmazonSimpleNotificationServiceClient(credentials, config);
+            }
+            else
+            {
+                // In production, use the default credentials provider (i.e., the IAM role)
+                _snsClient = new AmazonSimpleNotificationServiceClient(config);
+            }
+
         }
 
 

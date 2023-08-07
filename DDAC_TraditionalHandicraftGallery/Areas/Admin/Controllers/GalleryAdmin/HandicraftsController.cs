@@ -19,6 +19,8 @@ using Microsoft.Extensions.Options;
 using Amazon.SimpleNotificationService.Model;
 using System.Text.Json;
 using Amazon;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 {
@@ -32,16 +34,28 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 
         private readonly string _snsTopicArn;
 
-        public HandicraftsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration)
+        public HandicraftsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration, IWebHostEnvironment env)
         {
             _snsTopicArn = configuration["PromoteHandicraftSnsTopic"];
             _context = context;
             _userManager = userManager;
-
-            var credentials = new SessionAWSCredentials(awsConfig.Value.AccessKey, awsConfig.Value.SecretKey, awsConfig.Value.SessionToken);
             var config = new AmazonSimpleNotificationServiceConfig { RegionEndpoint = RegionEndpoint.GetBySystemName(awsConfig.Value.Region) };
 
-            _snsClient = new AmazonSimpleNotificationServiceClient(credentials, config);
+            if (env.IsDevelopment())
+            {
+                Console.WriteLine("DEVELOPMENT");
+                // In development, use the provided AWS credentials
+                var credentials = new SessionAWSCredentials(awsConfig.Value.AccessKey, awsConfig.Value.SecretKey, awsConfig.Value.SessionToken);
+
+                _snsClient = new AmazonSimpleNotificationServiceClient(credentials, config);
+            }
+            else
+            {
+                Console.WriteLine("PRODUCTION");
+                // In production, use the default credentials provider (i.e., the IAM role)
+                _snsClient = new AmazonSimpleNotificationServiceClient(config);
+            }
+
         }
 
         // GET: Admin/Handicrafts
