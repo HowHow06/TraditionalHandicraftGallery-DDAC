@@ -12,12 +12,15 @@
 
 <div>
     <div class="col-12">
-        <form asp-controller="Handicrafts" asp-action="SendPromotion" method="post">
-            <input type="hidden" asp-for="Id" />
-            <div class="mb-2 mt-1">
-                <button type="submit" class="btn btn-primary">Send Promotion</button>
-            </div>
-        </form>
+        @if (!ViewBag.PromoteSent)
+        {
+            <form id="promotionForm" asp-controller="Handicrafts" asp-action="SendPromotion" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="mb-2 mt-1">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">Send Promotion</button>
+                </div>
+            </form>
+        }
         @if (ViewBag.PromoteSent)
         {
             <div class="alert alert-success my-2">
@@ -90,6 +93,30 @@
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a> |
     <a asp-action="Index" class="btn btn-outline-primary waves-effect waves-light">Back to List</a>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Promotion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to send the promotion?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmPromotion">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("confirmPromotion").addEventListener("click", function () {
+        document.getElementById("promotionForm").submit();
+    });
+</script>
+
 
 <!-- end row -->
 <!-- JAVASCRIPT -->
