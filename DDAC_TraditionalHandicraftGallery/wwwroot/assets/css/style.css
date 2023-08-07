@@ -177,6 +177,10 @@ a:focus {
 /* Styles Switcher
 ====================================================================== */
 
+#wrapper {
+    padding-bottom: 5rem;
+}
+
 .boxed #wrapper {
     margin: 0 auto;
     width: 100%;
