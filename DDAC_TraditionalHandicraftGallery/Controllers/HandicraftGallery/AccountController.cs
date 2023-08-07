@@ -17,5 +17,10 @@ namespace DDAC_TraditionalHandicraftGallery.Controllers.HandicraftGallery
         {
             return View();
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

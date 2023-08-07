@@ -1,5 +1,6 @@
 using DDAC_TraditionalHandicraftGallery.DataAccess;
 using DDAC_TraditionalHandicraftGallery.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,7 +37,9 @@ namespace DDAC_TraditionalHandicraftGallery
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/AuthGalleryLogin";
+                options.AccessDeniedPath = "/Account/AccessDenied";
             });
+            services.Configure<AWSConfig>(Configuration.GetSection("AWS"));
 
         }
 
