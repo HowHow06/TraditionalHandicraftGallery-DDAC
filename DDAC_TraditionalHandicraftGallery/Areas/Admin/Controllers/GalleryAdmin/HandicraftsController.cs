@@ -11,6 +11,14 @@ using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using DDAC_TraditionalHandicraftGallery.ViewModels;
 using System.IO;
+using Amazon.Runtime;
+using Amazon.SimpleNotificationService;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Amazon.SimpleNotificationService.Model;
+using System.Text.Json;
+using Amazon;
 
 namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 {
@@ -19,9 +27,21 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
     {
         private readonly ApplicationDbContext _context;
 
-        public HandicraftsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAmazonSimpleNotificationService _snsClient;
+
+        private readonly string _snsTopicArn;
+
+        public HandicraftsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration)
         {
+            _snsTopicArn = configuration["PromoteHandicraftSnsTopic"];
             _context = context;
+            _userManager = userManager;
+
+            var credentials = new SessionAWSCredentials(awsConfig.Value.AccessKey, awsConfig.Value.SecretKey, awsConfig.Value.SessionToken);
+            var config = new AmazonSimpleNotificationServiceConfig { RegionEndpoint = RegionEndpoint.GetBySystemName(awsConfig.Value.Region) };
+
+            _snsClient = new AmazonSimpleNotificationServiceClient(credentials, config);
         }
 
         // GET: Admin/Handicrafts
@@ -34,7 +54,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 
         // GET: Admin/Handicrafts/Details/5
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, bool promoteSent = false)
         {
             if (id == null || _context.Handicrafts == null)
             {
@@ -49,6 +69,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 return NotFound();
             }
 
+            ViewBag.PromoteSent = promoteSent;
             return View(handicraft);
         }
 
@@ -205,6 +226,50 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         private bool HandicraftExists(int id)
         {
             return _context.Handicrafts.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SendPromotion(int id)
+        {
+            Console.WriteLine("Hi promote");
+            var handicraft = await _context.Handicrafts.Include(h => h.Type) // Include the related Type object
+                               .FirstOrDefaultAsync(h => h.Id == id);
+            if (handicraft == null || handicraft.IsHidden)
+            {
+                BadRequest("Unable to process the quote request.");
+            }
+
+            if (handicraft != null)
+            {
+                var promotionInformation = new
+                {
+                    HandicraftName = handicraft.Name,
+                    HandicraftId = handicraft.Id,
+                    HandicraftTypeName = handicraft.Type.Name,
+                    HandicraftDescription = handicraft.Description,
+                    HandicraftAuthorName = handicraft.AuthorName,
+                    HandicraftAuthorEmail = handicraft.AuthorEmail
+                };
+
+                var request = new PublishRequest
+                {
+                    TopicArn = _snsTopicArn,
+                    Message = JsonSerializer.Serialize(promotionInformation)
+                };
+
+                var response = await _snsClient.PublishAsync(request);
+
+                if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    Console.WriteLine("SENT TO SNS");
+                    return RedirectToAction("Details", new { id = handicraft.Id, promoteSent = true });
+                }
+            }
+
+            // Handle error or invalid input
+            return BadRequest("Unable to process the quote request.");
         }
     }
 }
