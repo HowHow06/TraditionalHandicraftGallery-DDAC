@@ -34,6 +34,9 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.RequestDate)
                             </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsProcessed)
+                            </th>
                         </tr>
                     </thead>
 
@@ -43,13 +46,15 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.User)
+                                    @Html.DisplayFor(modelItem => item.User.UserName)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Handicraft)
+                                    @Html.DisplayFor(modelItem => item.Handicraft.Name)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.RequestDate)
+                                </td>  <td>
+                                    @Html.DisplayFor(modelItem => item.IsProcessed)
                                 </td>                               
                             </tr>
                         }

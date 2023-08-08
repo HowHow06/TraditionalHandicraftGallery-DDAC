@@ -5,8 +5,11 @@
             <div class="navbar-brand-box">
 
                 <a href=@Url.Action("Index", "Dashboard") class="logo logo-light">
-                    <span class="logo">
-                        <img src="~/assets/images/HandicraftGalleryLogoLight-v2.png" alt="logo-sm-light" height="55">
+                    <span class="logo-sm">
+
+                    </span>
+                    <span class="logo-lg">
+                        <img src="~/assets/images/HandicraftGalleryLogoLight-v2.png" alt="logo-light" height="40">
                     </span>
                 </a>
             </div>
@@ -58,8 +61,8 @@
             <div class="dropdown d-inline-block user-dropdown">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                   @* <img class="rounded-circle header-profile-user" src="~/assets/images/users/avatar-2.jpg"
-                         alt="Header Avatar">*@
+                    @* <img class="rounded-circle header-profile-user" src="~/assets/images/users/avatar-2.jpg"
+                    alt="Header Avatar">*@
                     @*<i class="ri-shield-user-line"></i>*@
                     <span class="d-none d-xl-inline-block ms-1">@User.Identity.Name</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>

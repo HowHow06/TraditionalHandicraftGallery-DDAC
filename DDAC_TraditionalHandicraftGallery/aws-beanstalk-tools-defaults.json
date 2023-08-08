@@ -1,0 +1,20 @@
+
+{
+    "region" : "us-east-1",
+    "configuration" : "Debug",
+    "framework"     : "net7.0",
+    "self-contained" : true,
+    "application"    : "DDACTraditionalHandicraftGallery",
+    "environment"    : "DDACTraditionalHandicraftGallery-prod",
+    "enable-xray"    : true,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-01176007b194bf34c,sg-03e997684857e741a\";\"aws:ec2:vpc,Subnets\"=\"subnet-044c4c53afa218837\"",
+    "solution-stack"       : "64bit Amazon Linux 2 v2.5.6 running .NET Core",
+    "environment-type"     : "SingleInstance",
+    "cname"                : "ddactraditionalhandicraftgallery-prod",
+    "instance-type"        : "t2.micro",
+    "key-pair"             : "vockey",
+    "instance-profile"     : "LabInstanceProfile",
+    "service-role"         : "LabRole",
+    "proxy-server"         : "nginx"
+}
