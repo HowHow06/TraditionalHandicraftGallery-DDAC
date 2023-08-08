@@ -132,9 +132,9 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                         ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraftViewModel.TypeId);
                         return View("Create", handicraftViewModel);
                     }
-                    else if (handicraftViewModel.ImageURLFile.Length > 10 * 1024 * 1024)
+                    else if (handicraftViewModel.ImageURLFile.Length > 102400)
                     {
-                        ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of {10 * 1024 * 1024} bytes.");
+                        ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 102400 bytes.");
                         ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraftViewModel.TypeId);
                         return View("Create", handicraftViewModel);
                     }
