@@ -8,13 +8,15 @@
     "environment"    : "DDACTraditionalHandicraftGallery-prod",
     "enable-xray"    : true,
     "enhanced-health-type" : "enhanced",
-    "additional-options"   : "",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-01176007b194bf34c,sg-03e997684857e741a\";\"aws:ec2:vpc,Subnets\"=\"subnet-044c4c53afa218837\";\"aws:ec2:vpc,ELBSubnets\"=\"subnet-044c4c53afa218837,subnet-0d38ef238b5f99be3,subnet-0394a8b0078bf17ff,subnet-0c5d64f1142b59ec9,subnet-0b3dcc548397e2b44,subnet-051edbee5c89aa47f\"",
     "solution-stack"       : "64bit Amazon Linux 2 v2.5.6 running .NET Core",
-    "environment-type"     : "SingleInstance",
+    "environment-type"     : "LoadBalanced",
     "cname"                : "ddactraditionalhandicraftgallery-prod",
     "instance-type"        : "t2.micro",
     "key-pair"             : "vockey",
     "instance-profile"     : "LabInstanceProfile",
     "service-role"         : "LabRole",
-    "proxy-server"         : "nginx"
+    "proxy-server"         : "nginx",
+    "loadbalancer-type"    : "application",
+    "health-check-url"     : "/"
 }
