@@ -21,6 +21,7 @@ using System.Text.Json;
 using Amazon;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 {
@@ -126,6 +127,20 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    foreach (var error in modelStateVal.Errors)
+                    {
+                        // Log or print the error message
+                        Console.WriteLine($"Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                    }
+                }
+            }
+
             ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraftViewModel.TypeId);
             return View(handicraftViewModel);
         }
