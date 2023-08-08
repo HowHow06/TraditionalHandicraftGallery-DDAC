@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DDAC_TraditionalHandicraftGallery.ViewModels.EditPasswordViewModel
+@{
     ViewBag.Title = "Edit Password";
     ViewBag.pageTitle = "Traditional Handicraft Gallery";
     ViewBag.pTitle = "Edit Password";
@@ -10,21 +11,40 @@
         <div class="hm_login_header">
             <h1>Edit Password Form</h1>
         </div>
+        @{
+            if (ViewBag.PasswordChangedSuccessfully != null && ViewBag.PasswordChangedSuccessfully == true)
+            {
+                <div class="alert alert-success" role="alert">
+                    Password changed successfully!
+                </div>
+            }
+        }
         <div class="login_fields">
-            <form>
+            @using (Html.BeginForm("EditPassword", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
                 <div class="form-group mb-2">
-                    <input type="password" class="form-control" id="old-password" placeholder="Old Password">
+                    @Html.LabelFor(m => m.OldPassword)
+                    @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control", @placeholder = "Old Password" })
+                    @Html.ValidationMessageFor(m => m.OldPassword, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group mb-2">
-                    <input type="password" class="form-control" id="new-password" placeholder="New Password">
+                    @Html.LabelFor(m => m.NewPassword)
+                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", @placeholder = "New Password" })
+                    @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
                 </div>
                 <div class="form-group mb-2">
-                    <input type="password" class="form-control" id="re-password" placeholder="Re-type Password">
+                    @Html.LabelFor(m => m.ConfirmPassword)
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirm Password" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                 </div>
-                <div class="form_btn mb-3">
-                    <a href="#" class="hm_btn"> submit</a>
+                <div class="form_btn mb-4">
+                    <button type="submit" class="hm_btn">Submit</button>
                 </div>
-            </form>
+            }
         </div>
     </div>
 </div>
