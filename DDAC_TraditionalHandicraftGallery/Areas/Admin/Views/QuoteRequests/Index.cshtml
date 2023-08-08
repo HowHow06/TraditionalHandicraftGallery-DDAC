@@ -51,11 +51,12 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Handicraft.Name)
                                 </td>
+                                <td class="utc-date-time">
+                                    @item.RequestDate.ToString("o")
+                                </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.RequestDate)
-                                </td>  <td>
                                     @Html.DisplayFor(modelItem => item.IsProcessed)
-                                </td>                               
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -65,6 +66,32 @@
         </div> <!-- end card -->
     </div><!-- end col-->
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        var dateTimes = document.querySelectorAll('.utc-date-time');
+        dateTimes.forEach(function (dateTime) {
+            var utcDate = new Date(dateTime.textContent.trim());
+            var offset = -utcDate.getTimezoneOffset() / 60; // Get time zone offset in hours
+            var localDate = new Date(utcDate.getTime() + offset * 60 * 60 * 1000); // Add offset to UTC date-time
+            var options = {
+                day: 'numeric',
+                month: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+
+            dateTime.textContent = localDate.toLocaleString('en-US', options);
+        });
+        //dateTimes.forEach(function (dateTime) {
+        //    var utcDate = new Date(dateTime.textContent);
+        //    dateTime.textContent = utcDate.toLocaleString();
+        //});
+    });
+</script>
 
 <!-- end row-->
 <!-- JAVASCRIPT -->
