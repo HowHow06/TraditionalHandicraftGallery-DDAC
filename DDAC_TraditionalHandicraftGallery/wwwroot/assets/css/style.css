@@ -1282,7 +1282,7 @@ ul.artist_social li:last-child a {
 
 .hm_testimonial_wrapper {
     width: 100%;
-    background-image: url(http://placehold.it/1921x452);
+    background-color: dimgrey;
     background-size: cover;
     padding: 72px 0px 80px;
     position: relative;
