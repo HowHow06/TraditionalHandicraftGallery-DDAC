@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
+
 
 namespace DDAC_TraditionalHandicraftGallery
 {
@@ -32,6 +34,11 @@ namespace DDAC_TraditionalHandicraftGallery
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            // Add AWS X-Ray tracing to all AWS Services. This statement
+            // must come before registering any of the AWS Service clients
+            AWSSDKHandler.RegisterXRayForAllServices();
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.ConfigureApplicationCookie(options =>
@@ -57,6 +64,7 @@ namespace DDAC_TraditionalHandicraftGallery
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseXRay("DDAC_TraditionalHandicraftGallery");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
