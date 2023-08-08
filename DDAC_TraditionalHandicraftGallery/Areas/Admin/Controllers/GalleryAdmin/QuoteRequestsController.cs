@@ -23,7 +23,11 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         // GET: Admin/QuoteRequests
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.QuoteRequests.Include(q => q.Handicraft).Include(q => q.User);
+            var applicationDbContext = _context.QuoteRequests
+                        .Include(q => q.Handicraft)
+                        .Include(q => q.User)
+                        .OrderByDescending(q => q.RequestDate); // Sorting by RequestDate in descending order
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -162,7 +166,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         //    {
         //        _context.QuoteRequests.Remove(quoteRequest);
         //    }
-            
+
         //    await _context.SaveChangesAsync();
         //    return RedirectToAction(nameof(Index));
         //}
