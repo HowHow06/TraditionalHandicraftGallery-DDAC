@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var users = _userManager.Users;
+            var users = _userManager.Users.ToList();
             var userList = new List<ApplicationUser>();
 
             foreach (var user in users)

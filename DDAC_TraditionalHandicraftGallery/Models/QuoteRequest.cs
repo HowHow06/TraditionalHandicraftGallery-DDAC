@@ -17,6 +17,11 @@ namespace DDAC_TraditionalHandicraftGallery.Models
         [Required]
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
+
+        [Required]
+        [Display(Name = "Is Processed")]
+        public bool IsProcessed { get; set; } = false;
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } // Nullable DateTime

@@ -177,6 +177,10 @@ a:focus {
 /* Styles Switcher
 ====================================================================== */
 
+#wrapper {
+    padding-bottom: 5rem;
+}
+
 .boxed #wrapper {
     margin: 0 auto;
     width: 100%;
@@ -1702,6 +1706,8 @@ p.foo_con_para {
     background-color: #fc5a6d;
     padding: 20px 0px;
     text-align: center;
+    position: absolute;
+    bottom: 0;
 }
 .hm_bottom_footer p {
     color: #ffffff;

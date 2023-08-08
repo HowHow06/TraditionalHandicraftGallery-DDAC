@@ -1,52 +1,99 @@
-﻿@{
-    ViewBag.Title = "Item";
+﻿@model DDAC_TraditionalHandicraftGallery.Models.Handicraft
+@{
+    ViewBag.Title = "Details";
     ViewBag.pageTitle = "Traditional Handicraft Gallery";
-    ViewBag.pTitle = "Item";
-    ViewBag.noPageTitle = true;
+    ViewBag.pTitle = "Handicraft Details";
+    ViewBag.noPageTitle = false;
+    ViewBag.parentHref = @Url.RouteUrl("default", new { controller = "Gallery", action = "Index" });
     Layout = "~/Views/_Shared/_GalleryLayout.cshtml";
 }
 <div class="hm_news_wrapper shop_single">
     <div class="container">
         <div class="row">
-            <div class="col-lg-9 col-md-12">
-                <div class="hm_shop_single">
-                    <div class="hm_product_details">
+            <div class="col-md-12 mb-4">
+                <div class="hm_shop_single mb-4">
+                    <div class="hm_product_details mb-4">
                         <div class="col-lg-5 col-md-12 padding_left">
                             <div class="img_box">
-                                <img src="http://placehold.it/345x390" width="350" alt="" class="img-responsive" />
+                                <img src="@Model.ImageURL" alt="@Model.Name" class="img-responsive" />
                             </div>
                         </div>
                         <div class="col-lg-7 col-md-12">
-                            <div class="hm_product_info">
-                                <h2>hand made jewellery</h2>
+                            <div class="hm_product_info m-4">
+                                <h2>@Model.Name</h2>
                                 <p class="item_text">
-                                    But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness.Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam.
+                                    By @Model.AuthorName <br />
+                                    Author's Email: @Model.AuthorEmail
                                 </p>
-                                <div class="add_to_cart_section">
-                                    <button type="button" class="hm_btn add-to-cart"> Request Quote</button>
-                                </div>
-
-                                <div class="item-categories">Categories:&ensp; <a href="#">knitted hats,</a> <a href="#">Tank tops</a></div>
+                                <p class="item_text">
+                                    @Model.Description
+                                </p>
+                                @if (User.Identity.IsAuthenticated && !ViewBag.RequestSent)
+                                {
+                                    <form asp-controller="Quote" asp-action="RequestQuote" method="post" id="quoteRequestForm">
+                                        <input type="hidden" asp-for="Id" />
+                                        <!-- Include any other necessary fields -->
+                                        <div class="add_to_cart_section">
+                                            <button type="button" class="hm_btn" data-bs-toggle="modal" data-bs-target="#confirmModal"> Request Quote</button>
+                                        </div>
+                                    </form>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Confirm Quote Request</h5>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to request a quote for this handicraft?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="hm_btn" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="hm_btn" id="confirmRequest">Confirm</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <p class="item_text">
+                                        *Please <a asp-action="Index" asp-controller="AuthGalleryLogin" asp-route-returnUrl="@Url.RouteUrl("GalleryItem", new { id=Model.Id })">login</a> to request a quote.
+                                    </p>
+                                }
+                                @if (ViewBag.RequestSent)
+                                {
+                                    <div class="alert alert-success">
+                                        Request for quote has been sent successfully!
+                                    </div>
+                                }
+                                <div class="item-categories">Category:&ensp;@Model.Type.Name</div>
                             </div>
                         </div>
                     </div>
                     <!--product info tab-->
-                    <div class="col-lg-12 col-md-12 padding_left">
+                    @*   <div class="col-lg-12 col-md-12 padding_left">
 
-                        <div class="hm_pro_tab">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"><p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish.</p></div>                         
-                            </div>
-                        </div>
+                    <div class="hm_pro_tab">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
+                    </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"><p>@Model.Description</p></div>
                     </div>
-                   
+                    </div>
+                    </div>*@
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('confirmRequest').addEventListener('click', function () {
+        document.getElementById('quoteRequestForm').submit(); // Submit the form
+    });
+</script>

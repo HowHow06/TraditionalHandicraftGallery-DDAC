@@ -17,3 +17,14 @@
 ## User's credential
 
 1. `user` & `User@123`
+
+## To deploy to Elastic Beanstalk
+
+1. Use t2.micro
+2. After successfully launched the Elastic Beanstalk in Visual Studio, go to AWS Web Interface.
+3. Navigate to the Elastic Beanstalk dashboard.
+4. Select the environment you want to inspect.
+5. In the sidebar, select "Configuration".
+6. Click the Edit button at the section "Updates, monitoring, and logging".
+7. Scroll down to add new Environment properties with the key `ASPNETCORE_ENVIRONMENT` and value `Production`.
+8. This will set the application to Production mode and will not rely on the AWS Credentials in appsettings file.
