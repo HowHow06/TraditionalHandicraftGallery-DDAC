@@ -25,7 +25,6 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="SQL_Queries\" />
-    <Folder Include="Views\Handicraft\" />
   </ItemGroup>
 
 </Project>
