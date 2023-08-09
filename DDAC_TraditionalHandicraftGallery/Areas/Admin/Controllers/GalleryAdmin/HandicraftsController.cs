@@ -120,6 +120,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                     AuthorEmail = handicraftViewModel.AuthorEmail,
                     TypeId = handicraftViewModel.TypeId,
                     IsHidden = handicraftViewModel.IsHidden,
+                    ImageURL = handicraftViewModel.ImageURL,
                 };
                 if (handicraftViewModel.ImageURLFile != null && handicraftViewModel.ImageURLFile.Length > 0)
                 {
@@ -215,6 +216,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 AuthorEmail = handicraft.AuthorEmail,
                 TypeId = handicraft.TypeId,
                 IsHidden = handicraft.IsHidden,
+                ImageURL = handicraft.ImageURL,
             };
 
             return View(handicraftViewModel);
@@ -226,7 +228,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,AuthorName,AuthorEmail,TypeId,IsHidden,ImageURL,CreatedAt,UpdatedAt")] Handicraft handicraft)
+        public async Task<IActionResult> Edit( int id, HandicraftViewModel handicraft)
         {
             if (id != handicraft.Id)
             {
@@ -237,6 +239,63 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
             {
                 try
                 {
+                    
+                    if (handicraft.ImageURLFile != null && handicraft.ImageURLFile.Length > 0)
+                    {
+
+                        //delete the old image first
+                        Uri uri = new Uri(handicraft.ImageURL);
+                        string objectKey = uri.AbsolutePath.TrimStart('/');
+                        Console.WriteLine(objectKey);
+
+                        string bucketName = "handicraft-tp055978";
+
+                        var deleteRequest = new DeleteObjectRequest
+                        {
+                            BucketName = bucketName,
+                            Key = objectKey
+                        };
+
+                        DeleteObjectResponse response = await _s3Client.DeleteObjectAsync(deleteRequest);
+                        _context.Handicrafts.Remove(handicraft);
+
+                        // Check if the uploaded file is an image
+                        string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" }; // Add more extensions if needed
+                        string fileExtension = Path.GetExtension(handicraft.ImageURLFile.FileName).ToLowerInvariant();
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("ImageURLFile", "The uploaded file is not a valid image.");
+                            ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraft.TypeId);
+                            return View("Edit", handicraft);
+                        }
+                        else if (handicraft.ImageURLFile.Length > 102400)
+                        {
+                            ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 102400 bytes.");
+                            ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraft.TypeId);
+                            return View("Edit", handicraft);
+                        }
+                        else
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await handicraft.ImageURLFile.CopyToAsync(memoryStream);
+
+                                var uploadRequest = new PutObjectRequest
+                                {
+                                    BucketName = "handicraft-tp055978",
+                                    Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + handicraft.ImageURLFile.FileName,
+                                    InputStream = memoryStream,
+                                    CannedACL = S3CannedACL.PublicRead
+                                };
+
+                                await _s3Client.PutObjectAsync(uploadRequest);
+                                handicraft.ImageURL = $"https://{uploadRequest.BucketName}.s3.amazonaws.com/{uploadRequest.Key}";
+                            }
+                        }
+                    }
+
+
+
                     _context.Update(handicraft);
                     await _context.SaveChangesAsync();
                 }
