@@ -32,7 +32,6 @@ namespace DDAC_TraditionalHandicraftGallery.Models
         [Display(Name = "Is Hidden")]
         public bool IsHidden { get; set; } = false;
 
-        [Required]
         [Display(Name = "Image")]
         public string ImageURL { get; set; }
 
