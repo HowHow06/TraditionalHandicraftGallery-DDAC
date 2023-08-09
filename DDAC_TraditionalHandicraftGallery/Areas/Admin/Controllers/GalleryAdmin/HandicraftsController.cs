@@ -37,10 +37,12 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         private readonly IAmazonS3 _s3Client;
 
         private readonly string _snsTopicArn;
+        private readonly string _s3BucketName;
 
         public HandicraftsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOptions<AWSConfig> awsConfig, IConfiguration configuration, IWebHostEnvironment env)
         {
             _snsTopicArn = configuration["PromoteHandicraftSnsTopic"];
+            _s3BucketName = configuration["S3BucketName"];
             _context = context;
             _userManager = userManager;
             var config = new AmazonSimpleNotificationServiceConfig { RegionEndpoint = RegionEndpoint.GetBySystemName(awsConfig.Value.Region) };
@@ -120,7 +122,6 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                     AuthorEmail = handicraftViewModel.AuthorEmail,
                     TypeId = handicraftViewModel.TypeId,
                     IsHidden = handicraftViewModel.IsHidden,
-                    ImageURL = handicraftViewModel.ImageURL,
                 };
                 if (handicraftViewModel.ImageURLFile != null && handicraftViewModel.ImageURLFile.Length > 0)
                 {
@@ -133,9 +134,9 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                         ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraftViewModel.TypeId);
                         return View("Create", handicraftViewModel);
                     }
-                    else if (handicraftViewModel.ImageURLFile.Length > 102400)
+                    else if (handicraftViewModel.ImageURLFile.Length > 3 * 1024 * 1024)
                     {
-                        ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 102400 bytes.");
+                        ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 3mb.");
                         ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraftViewModel.TypeId);
                         return View("Create", handicraftViewModel);
                     }
@@ -147,8 +148,8 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 
                             var uploadRequest = new PutObjectRequest
                             {
-                                BucketName = "handicraft-tp055978",
-                                Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"-"+handicraftViewModel.ImageURLFile.FileName,
+                                BucketName = _s3BucketName,
+                                Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + handicraftViewModel.ImageURLFile.FileName,
                                 InputStream = memoryStream,
                                 CannedACL = S3CannedACL.PublicRead
                             };
@@ -168,7 +169,6 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 //// Upload the file to AWS S3 and get the URL, below is a custom function that need to be defined before use
                 //var imageUrl = await _awsS3Service.UploadFile(memoryStream, handicraft.ImageURLFile.FileName);
 
-                //handicraft.ImageURL = "";
                 _context.Add(handicraft);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -228,7 +228,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit( int id, HandicraftViewModel handicraft)
+        public async Task<IActionResult> Edit(int id, HandicraftViewModel handicraft)
         {
             if (id != handicraft.Id)
             {
@@ -239,26 +239,9 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
             {
                 try
                 {
-                    
+
                     if (handicraft.ImageURLFile != null && handicraft.ImageURLFile.Length > 0)
                     {
-
-                        //delete the old image first
-                        Uri uri = new Uri(handicraft.ImageURL);
-                        string objectKey = uri.AbsolutePath.TrimStart('/');
-                        Console.WriteLine(objectKey);
-
-                        string bucketName = "handicraft-tp055978";
-
-                        var deleteRequest = new DeleteObjectRequest
-                        {
-                            BucketName = bucketName,
-                            Key = objectKey
-                        };
-
-                        DeleteObjectResponse response = await _s3Client.DeleteObjectAsync(deleteRequest);
-                        _context.Handicrafts.Remove(handicraft);
-
                         // Check if the uploaded file is an image
                         string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" }; // Add more extensions if needed
                         string fileExtension = Path.GetExtension(handicraft.ImageURLFile.FileName).ToLowerInvariant();
@@ -268,33 +251,47 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                             ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraft.TypeId);
                             return View("Edit", handicraft);
                         }
-                        else if (handicraft.ImageURLFile.Length > 102400)
+                        else if (handicraft.ImageURLFile.Length > 3 * 1024 * 1024)
                         {
-                            ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 102400 bytes.");
+                            ModelState.AddModelError("ImageURLFile", $"The uploaded image size exceeds the maximum allowed size of 3mb.");
                             ViewData["TypeId"] = new SelectList(_context.HandicraftTypes, "Id", "Name", handicraft.TypeId);
                             return View("Edit", handicraft);
                         }
-                        else
+
+                        if (handicraft.ImageURL != null)
                         {
-                            using (var memoryStream = new MemoryStream())
+                            //delete the old image first
+                            Uri uri = new Uri(handicraft.ImageURL);
+                            string objectKey = uri.AbsolutePath.TrimStart('/');
+                            Console.WriteLine(objectKey);
+
+                            var deleteRequest = new DeleteObjectRequest
                             {
-                                await handicraft.ImageURLFile.CopyToAsync(memoryStream);
+                                BucketName = _s3BucketName,
+                                Key = objectKey
+                            };
 
-                                var uploadRequest = new PutObjectRequest
-                                {
-                                    BucketName = "handicraft-tp055978",
-                                    Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + handicraft.ImageURLFile.FileName,
-                                    InputStream = memoryStream,
-                                    CannedACL = S3CannedACL.PublicRead
-                                };
-
-                                await _s3Client.PutObjectAsync(uploadRequest);
-                                handicraft.ImageURL = $"https://{uploadRequest.BucketName}.s3.amazonaws.com/{uploadRequest.Key}";
-                            }
+                            DeleteObjectResponse response = await _s3Client.DeleteObjectAsync(deleteRequest);
+                            _context.Handicrafts.Remove(handicraft);
                         }
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await handicraft.ImageURLFile.CopyToAsync(memoryStream);
+
+                            var uploadRequest = new PutObjectRequest
+                            {
+                                BucketName = _s3BucketName,
+                                Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + handicraft.ImageURLFile.FileName,
+                                InputStream = memoryStream,
+                                CannedACL = S3CannedACL.PublicRead
+                            };
+
+                            await _s3Client.PutObjectAsync(uploadRequest);
+                            handicraft.ImageURL = $"https://{uploadRequest.BucketName}.s3.amazonaws.com/{uploadRequest.Key}";
+                        }
+
                     }
-
-
 
                     _context.Update(handicraft);
                     await _context.SaveChangesAsync();
@@ -349,33 +346,25 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
             var handicraft = await _context.Handicrafts.FindAsync(id);
             if (handicraft != null)
             {
-
-
                 try
                 {
                     Uri uri = new Uri(handicraft.ImageURL);
                     string objectKey = uri.AbsolutePath.TrimStart('/');
                     Console.WriteLine(objectKey);
 
-                    string bucketName = "handicraft-tp055978";
-
                     var deleteRequest = new DeleteObjectRequest
                     {
-                        BucketName = bucketName,
+                        BucketName = _s3BucketName,
                         Key = objectKey
                     };
 
                     DeleteObjectResponse response = await _s3Client.DeleteObjectAsync(deleteRequest);
                     _context.Handicrafts.Remove(handicraft);
-
-
                 }
                 catch (Exception ex)
                 {
                     BadRequest(ex.Message);
                 }
-
-
 
             }
 
