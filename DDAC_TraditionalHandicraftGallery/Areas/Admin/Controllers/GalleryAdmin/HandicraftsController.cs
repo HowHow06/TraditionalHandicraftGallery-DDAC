@@ -147,7 +147,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                             var uploadRequest = new PutObjectRequest
                             {
                                 BucketName = "handicraft-tp055978",
-                                Key = "images/" + handicraftViewModel.ImageURLFile.FileName,
+                                Key = "images/" + DateTime.UtcNow.ToString("yyyyMMddHHmmss")+"-"+handicraftViewModel.ImageURLFile.FileName,
                                 InputStream = memoryStream,
                                 CannedACL = S3CannedACL.PublicRead
                             };
@@ -290,7 +290,34 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
             var handicraft = await _context.Handicrafts.FindAsync(id);
             if (handicraft != null)
             {
-                _context.Handicrafts.Remove(handicraft);
+
+
+                try
+                {
+                    Uri uri = new Uri(handicraft.ImageURL);
+                    string objectKey = uri.AbsolutePath.TrimStart('/');
+                    Console.WriteLine(objectKey);
+
+                    string bucketName = "handicraft-tp055978";
+
+                    var deleteRequest = new DeleteObjectRequest
+                    {
+                        BucketName = bucketName,
+                        Key = objectKey
+                    };
+
+                    DeleteObjectResponse response = await _s3Client.DeleteObjectAsync(deleteRequest);
+                    _context.Handicrafts.Remove(handicraft);
+
+
+                }
+                catch (Exception ex)
+                {
+                    BadRequest(ex.Message);
+                }
+
+
+
             }
 
             await _context.SaveChangesAsync();
