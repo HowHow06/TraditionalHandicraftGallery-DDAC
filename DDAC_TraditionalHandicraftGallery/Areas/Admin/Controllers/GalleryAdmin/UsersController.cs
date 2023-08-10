@@ -121,7 +121,8 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                PasswordHash = user.PasswordHash
             };
 
 
@@ -133,7 +134,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id, ApplicationUserViewModel userViewModel)
         {
-            if (id.Equals(userViewModel.Id))
+            if (id != userViewModel.Id)
             {
                 return NotFound();
             }
@@ -152,7 +153,14 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.EmailConfirmed = userViewModel.EmailConfirmed;
-                user.PasswordHash = hasher.HashPassword(null, userViewModel.Password);
+                if (userViewModel.Password != null)
+                {
+                    user.PasswordHash = hasher.HashPassword(null, userViewModel.Password);
+                }
+                else
+                {
+                    user.PasswordHash = userViewModel.PasswordHash;
+                }
 
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
