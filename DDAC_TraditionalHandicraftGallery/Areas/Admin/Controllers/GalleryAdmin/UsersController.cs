@@ -72,11 +72,18 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(ApplicationUserViewModel userViewModel)
+        public async Task<IActionResult> Create(CreateApplicationUserViewModel userViewModel)
         {
 
             if (ModelState.IsValid)
             {
+
+                // Check if the new password and confirmation match
+                if (userViewModel.Password != userViewModel.ConfirmPassword)
+                {
+                    ModelState.AddModelError(string.Empty, "Password and confirmation password do not match.");
+                    return View(userViewModel);
+                }
 
                 var hasher = new PasswordHasher<ApplicationUser>();
                 var user = new ApplicationUser
@@ -116,7 +123,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                 return new ForbidResult();
             }
 
-            var userViewModel = new ApplicationUserViewModel
+            var userViewModel = new EditApplicationUserViewModel
             {
                 Id = user.Id,
                 UserName = user.UserName,
@@ -132,7 +139,7 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(string id, ApplicationUserViewModel userViewModel)
+        public async Task<IActionResult> Edit(string id, EditApplicationUserViewModel userViewModel)
         {
             if (id != userViewModel.Id)
             {
@@ -149,12 +156,18 @@ namespace DDAC_TraditionalHandicraftGallery.Areas.Admin.Controllers.GalleryAdmin
                     return new ForbidResult();
                 }
 
-                var hasher = new PasswordHasher<ApplicationUser>();
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.EmailConfirmed = userViewModel.EmailConfirmed;
                 if (userViewModel.Password != null)
                 {
+                    // Check if the new password and confirmation match
+                    if (userViewModel.Password != userViewModel.ConfirmPassword)
+                    {
+                        ModelState.AddModelError(string.Empty, "Password and confirmation password do not match.");
+                        return View(userViewModel);
+                    }
+                    var hasher = new PasswordHasher<ApplicationUser>();
                     user.PasswordHash = hasher.HashPassword(null, userViewModel.Password);
                 }
                 else

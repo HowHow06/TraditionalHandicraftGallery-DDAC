@@ -32,6 +32,10 @@ namespace DDAC_TraditionalHandicraftGallery.Controllers.HandicraftGallery
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPassword(EditPasswordViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Index", model);
+            }
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -71,7 +75,7 @@ namespace DDAC_TraditionalHandicraftGallery.Controllers.HandicraftGallery
                 return View("Index", model);
             }
         }
-   
+
 
         public IActionResult ViewQuoteRequest()
         {
